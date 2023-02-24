@@ -2,9 +2,10 @@ const path = require('path'); // path is the default helper from Node js: its ca
 const electron = require('electron');
 const { app, BrowserWindow, Tray } = electron;
 
+const TimerTray = require('./app/timerTray');
+
 // Floating reference to the mainWindow
 let mainWindow;
-let tray;
 
 app.on('ready', () => {
   mainWindow = new BrowserWindow({
@@ -18,7 +19,7 @@ app.on('ready', () => {
     show: false,
   });
 
-  // URL for the BrowserWIndow to look at
+  // URL for the BrowserWindow to look at
   mainWindow.loadURL(`File://${__dirname}/src/index.html`);
 
   // NOTE: you do NOT need to state @2x modifier at the end of 'windows-icon' because electron will choose whether you need the high res version or not
@@ -28,10 +29,5 @@ app.on('ready', () => {
   const iconPath = path.join(__dirname, `./src/assets/${iconName}`);
 
   // Tray takes only 1 arg: path to the icon image
-  tray = new Tray(iconPath);
-
-  // Can create event handlers on Tray, same as we can with BrowserWindow
-  tray.on('click', () => {
-    mainWindow.show();
-  });
+  new TimerTray(iconPath, mainWindow);
 });

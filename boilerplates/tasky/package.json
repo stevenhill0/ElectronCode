@@ -2,14 +2,14 @@
   "name": "timer",
   "version": "1.0.0",
   "description": "Electron timer app",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
     "electron": "electron ."
   },
   "author": "Rallycoding",
   "devDependencies": {
-    "electron": "~1.6.2"
+    "electron": "^22.3.1"
   },
   "dependencies": {
     "babel-core": "^6.24.0",
