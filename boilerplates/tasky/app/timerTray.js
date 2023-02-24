@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { Tray } = electron;
+const { Tray, app, Menu } = electron;
 
 // Passing in the iconPath cos the Tray instance expects 1st arg: path to the icon image
 class TimerTray extends Tray {
@@ -18,6 +18,8 @@ class TimerTray extends Tray {
     // Want to setup so the onClick is run when the class is called
     // Getting access to all functions from the parent class Tray
     this.on('click', this.onClick);
+
+    this.on('right-click', this.onRightClick);
   }
 
   // Can create event handlers on Tray, same as we can with BrowserWindow. After moving from index.js: instead of creating handler directly on Tray, we are setting the up the click event in the class constructor
@@ -46,6 +48,19 @@ class TimerTray extends Tray {
       });
       this.mainWindow.show();
     }
+  };
+
+  onRightClick = () => {
+    // Create a new menu template
+    // For better performance: we build our templates FIRST (using the buildFromTemplate() helper function), because the menu labels may CHANGE all depending on what we are doing (the state) inside the app
+    const menuConfig = Menu.buildFromTemplate([
+      { label: 'Quit', click: () => app.quit() },
+    ]);
+    // Build the menu template
+
+    // Tell our timer tray to display that menu
+    // popUpContextMenu is a helper function from Tray class
+    this.popUpContextMenu(menuConfig);
   };
 }
 

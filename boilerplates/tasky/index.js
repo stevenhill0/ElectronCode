@@ -6,6 +6,7 @@ const TimerTray = require('./app/timerTray');
 
 // Floating reference to the mainWindow
 let mainWindow;
+let tray;
 
 app.on('ready', () => {
   mainWindow = new BrowserWindow({
@@ -28,6 +29,7 @@ app.on('ready', () => {
   // The join function in the path library joins two paths and makes sure they work on any operating system
   const iconPath = path.join(__dirname, `./src/assets/${iconName}`);
 
-  // Tray takes only 1 arg: path to the icon image
-  new TimerTray(iconPath, mainWindow);
+  // TimerTray custom class takes two args: original Tray icon path, and mainWindow (so functions in TimerTray have access to it)
+  // Keeping the tray variable as a reference so that TimerTray does not get garbage collected (deletes in memory) by JS
+  tray = new TimerTray(iconPath, mainWindow);
 });
