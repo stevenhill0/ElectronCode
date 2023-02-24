@@ -11,6 +11,10 @@ class TimerTray extends Tray {
     // Assigning it as an instance property
     this.mainWindow = mainWindow;
 
+    // The setToolTip function is from the parent class Tray
+    // Takes one arg: string: what the tooltip shows when the mouse hovers
+    this.setToolTip('Timer App');
+
     // Want to setup so the onClick is run when the class is called
     // Getting access to all functions from the parent class Tray
     this.on('click', this.onClick);
