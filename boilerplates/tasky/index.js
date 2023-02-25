@@ -1,24 +1,18 @@
-const path = require('path'); // path is the default helper from Node js: its called the path module: it generates paths regardless what operating system user is on
+const path = require('path'); // path is the default helper from Node js: it's called the path module: it generates paths regardless what operating system user is on
 const electron = require('electron');
-const { app, BrowserWindow, Tray } = electron;
+const { app, Tray } = electron;
 
 const TimerTray = require('./app/timerTray');
+const MainWindow = require('./app/mainWindow');
 
 // Floating reference to the mainWindow
 let mainWindow;
 let tray;
 
 app.on('ready', () => {
-  mainWindow = new BrowserWindow({
-    webPreferences: { nodeIntegration: true, contextIsolation: false },
-    width: 300,
-    height: 500,
-    // The frame property controls showing the status bar or not. False states to not show
-    frame: false,
-    // resizable property controls whether you can resize the window horizontally or vertically
-    resizable: false,
-    show: false,
-  });
+  // app.dock.hide();
+
+  mainWindow = new MainWindow();
 
   // URL for the BrowserWindow to look at
   mainWindow.loadURL(`File://${__dirname}/src/index.html`);
