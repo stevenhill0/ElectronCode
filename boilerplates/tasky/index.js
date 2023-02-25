@@ -23,6 +23,11 @@ app.on('ready', () => {
   // URL for the BrowserWindow to look at
   mainWindow.loadURL(`File://${__dirname}/src/index.html`);
 
+  // blur event is when whenever the user clicks away from the app i.e. clicks anywhere else besides the app
+  // Only use it if building an app that sits in the system tray. Don't use it for a traditional desktop app
+  mainWindow.on('blur', () => {
+    mainWindow.hide();
+  });
   // NOTE: you do NOT need to state @2x modifier at the end of 'windows-icon' because electron will choose whether you need the high res version or not
   const iconName =
     process.platform === 'win32' ? 'windows-icon.png' : 'iconTemplate.png';
