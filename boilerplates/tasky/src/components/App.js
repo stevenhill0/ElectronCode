@@ -1,35 +1,36 @@
-import React, { Component } from "react";
-import { Route, Switch } from "react-router-dom";
+import { ipcRenderer } from 'electron';
+import React, { Component } from 'react';
+import { Route, Switch } from 'react-router-dom';
 
-import Header from "./Header";
-import TasksIndex from "./TasksIndex";
-import TasksShow from "./TasksShow";
-import Timer from "../utils/Timer";
-import Settings from "./Settings";
+import Timer from '../utils/Timer';
+import Header from './Header';
+import Settings from './Settings';
+import TasksIndex from './TasksIndex';
+import TasksShow from './TasksShow';
 
-const APP_DATA = JSON.parse(localStorage.getItem("__INITIAL_STATE__"));
+const APP_DATA = JSON.parse(localStorage.getItem('__INITIAL_STATE__'));
 
 const INITIAL_STATE = {
   tasks: [
-    { id: 1, task: "Build App1", totalTime: 10 },
-    { id: 2, task: "Build App2", totalTime: 60 },
-    { id: 3, task: "Build App3", totalTime: 1000 },
-    { id: 4, task: "Build App4", totalTime: 10000 },
-    { id: 5, task: "Build App5", totalTime: 100000 }
+    { id: 1, task: 'Build App1', totalTime: 10 },
+    { id: 2, task: 'Build App2', totalTime: 60 },
+    { id: 3, task: 'Build App3', totalTime: 1000 },
+    { id: 4, task: 'Build App4', totalTime: 10000 },
+    { id: 5, task: 'Build App5', totalTime: 100000 },
   ],
   activeTask: null,
   timer: {
     active: false,
     time: 10,
-    unit: "seconds",
-    display: ""
-  }
+    unit: 'seconds',
+    display: '',
+  },
 };
 
 class App extends Component {
   static defaultProps = {
     updateTrayText: () => {},
-    onTimerExpire: () => {}
+    onTimerExpire: () => {},
   };
 
   constructor(props) {
@@ -43,26 +44,29 @@ class App extends Component {
   // -------- electron event handlers -----------------
   // --------------------------------------------------
 
-  onAppClose = () => {
+  onAppClose = () => {};
 
+  // Gets called every second the timer gets updated
+  // Updates the timer in the status bar
+  // title is passed to react
+  updateTrayText = (title) => {
+    ipcRenderer.send('update-timer', title);
   };
 
-  updateTrayText = title => {
-
-  };
-
+  // Use this to clear out/reset the text
+  // When clicking on the icon (after it has displayed) it will clear the timer
   timerHasExpired = () => {
-
+    ipcRenderer.send('update-timer', '');
   };
 
-  // -------- end of electron event handerls ----------
+  // -------- end of electron event handlers ----------
 
   componentDidMount() {
     this.initializeTimer();
   }
 
   componentDidUpdate() {
-    localStorage.setItem("__INITIAL_STATE__", JSON.stringify(this.state));
+    localStorage.setItem('__INITIAL_STATE__', JSON.stringify(this.state));
   }
 
   initializeTimer(timerSettings = {}) {
@@ -71,13 +75,13 @@ class App extends Component {
       duration: time || this.state.timer.time,
       unit: unit || this.state.timer.unit,
       onDisplayChange: this.handleTimerUpdate,
-      onTimerExpiration: this.handleTimerExpiration
+      onTimerExpiration: this.handleTimerExpiration,
     };
     this.timer = new Timer(timerConfig);
   }
 
   handleTimerUpdate = (newDisplay, reset) => {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       const { timer, activeTask } = prevState;
       const { active } = timer;
       const updateTaskTime = active && !reset.reset;
@@ -88,8 +92,8 @@ class App extends Component {
           ...activeTask,
           totalTime: updateTaskTime
             ? activeTask.totalTime + 1
-            : activeTask.totalTime
-        }
+            : activeTask.totalTime,
+        },
       };
     });
 
@@ -99,31 +103,31 @@ class App extends Component {
 
   handleTimerExpiration = () => {
     this.setState({
-      timer: { ...this.state.timer, active: false }
+      timer: { ...this.state.timer, active: false },
     });
     this.timerHasExpired(); // handler for electron Notifications
   };
 
-  createTask = task => {
+  createTask = (task) => {
     this.setState({
-      tasks: [task, ...this.state.tasks]
+      tasks: [task, ...this.state.tasks],
     });
   };
 
-  deleteTask = task => {
+  deleteTask = (task) => {
     this.setState({
-      tasks: this.state.tasks.filter(item => item.id !== task.id)
+      tasks: this.state.tasks.filter((item) => item.id !== task.id),
     });
   };
 
-  handleSettingsUpdate = newSettings => {
+  handleSettingsUpdate = (newSettings) => {
     this.initializeTimer(newSettings);
     this.setState({
       timer: {
         ...this.state.timer,
         ...newSettings,
-        display: this.timer.display
-      }
+        display: this.timer.display,
+      },
     });
   };
 
@@ -131,22 +135,22 @@ class App extends Component {
     this.setState({ ...INITIAL_STATE });
   };
 
-  handleActivation = task => {
+  handleActivation = (task) => {
     this.initializeTimer();
     this.setState({
-      tasks: this.state.tasks.filter(item => item.id !== task.id),
+      tasks: this.state.tasks.filter((item) => item.id !== task.id),
       activeTask: task,
       timer: {
         ...this.state.timer,
-        display: this.timer.display
-      }
+        display: this.timer.display,
+      },
     });
   };
 
-  handleDeactivation = activeTask => {
+  handleDeactivation = (activeTask) => {
     this.setState({
       tasks: [activeTask, ...this.state.tasks],
-      activeTask: null
+      activeTask: null,
     });
   };
 
@@ -154,7 +158,7 @@ class App extends Component {
     this.timer.start(() => {
       // sending a callback so there is no delay in rendering start/stop buttons
       this.setState({
-        timer: { ...this.state.timer, active: true }
+        timer: { ...this.state.timer, active: true },
       });
     });
   };
@@ -162,7 +166,7 @@ class App extends Component {
   handleTimerStop = () => {
     this.timer.stop(() => {
       this.setState({
-        timer: { ...this.state.timer, active: false }
+        timer: { ...this.state.timer, active: false },
       });
     });
   };
@@ -218,8 +222,8 @@ class App extends Component {
 
 const styles = {
   container: {
-    height: "88vh"
-  }
+    height: '88vh',
+  },
 };
 
 export default App;

@@ -1,6 +1,6 @@
 const path = require('path'); // path is the default helper from Node js: it's called the path module: it generates paths regardless what operating system user is on
 const electron = require('electron');
-const { app, Tray } = electron;
+const { app, ipcMain } = electron;
 
 const TimerTray = require('./app/timerTray');
 const MainWindow = require('./app/mainWindow');
@@ -31,4 +31,10 @@ app.on('ready', () => {
   // TimerTray custom class takes two args: original Tray icon path, and mainWindow (so functions in TimerTray have access to it)
   // Keeping the tray variable as a reference so that TimerTray does not get garbage collected (deletes in memory) by JS
   tray = new TimerTray(iconPath, mainWindow);
+
+  // To get the message to show in the status bar we can use the tray object
+  ipcMain.on('update-timer', (event, timeLeft) => {
+    // setTitle is a built in function
+    tray.setTitle(timeLeft);
+  });
 });

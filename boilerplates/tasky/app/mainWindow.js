@@ -7,7 +7,11 @@ class MainWindow extends BrowserWindow {
   // Remember the super() function just passes the data to the parent class i.e. BrowserWindow
   constructor() {
     super({
-      webPreferences: { nodeIntegration: true, contextIsolation: false },
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false,
+        preload: __dirname + '/preload.js',
+      },
       width: 300,
       height: 500,
       // The frame property controls showing the status bar or not. False states to not show
