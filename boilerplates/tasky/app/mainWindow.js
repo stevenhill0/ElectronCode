@@ -11,6 +11,7 @@ class MainWindow extends BrowserWindow {
         nodeIntegration: true,
         contextIsolation: false,
         preload: __dirname + '/preload.js',
+        backgroundThrottling: false,
       },
       width: 300,
       height: 500,
